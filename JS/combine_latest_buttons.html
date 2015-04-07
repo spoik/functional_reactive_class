@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Button Combine Latest</title>
+</head>
+<body>
+    <button id="num-button">Number</button>
+    <button id="letter-button">Letter</button>
+
+    <div id="output"></div>
+
+    <script src="vendor/rxjs/dist/rx.lite.js"></script>
+    <script>
+        var numButton = document.getElementById('num-button'),
+            letterButton = document.getElementById('letter-button'),
+            output = document.getElementById('output'),
+
+            numButtonObservable = Rx.Observable.fromEvent(numButton, 'click')
+                .scan(0, function(acc) {
+                    return acc + 1;
+                }),
+
+            letterButtonObservable = Rx.Observable.fromEvent(letterButton, 'click')
+                .scan(-1, function(acc) {
+                    return acc + 1;
+                })
+                .map(function(x) {
+                    return String.fromCharCode(97 + x);
+                }),
+                
+            numLetterButtonCombineLatestObservable = Rx.Observable.combineLatest(
+                numButtonObservable,
+                letterButtonObservable,
+                function(num, letter) {
+                    return num + letter;
+                });
+
+        numLetterButtonCombineLatestObservable.subscribe(function(x) {
+            output.innerHTML = x;
+        });
+    </script>
+</body>
+</html>
